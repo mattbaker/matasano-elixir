@@ -23,18 +23,20 @@ defmodule Matasano do
       "f" =>	2.228, "g" =>	2.015, "y" =>	1.974,
       "p" =>	1.929
     }
-
     cipher_len = String.length(cipher_str)
+
+    is_letter = fn(char) -> char =~ ~r/[a-z]/ end
+    increase_entry_count = fn(letter, acc) -> Map.update(acc, letter, 1, &(&1 + 1)) end
+    put_frequency = fn({letter, count}, freqs) -> Map.put(freqs, letter, count / cipher_len) end
 
     cipher_freqs = cipher_str |>
       String.graphemes |>
       Enum.map(&String.downcase/1) |>
-      Enum.filter(&(&1 =~ ~r/[a-z]/)) |>
-      Enum.reduce(%{}, fn(letter, acc) ->
-        Map.update(acc, letter, 1, &(&1 + 1)) end) |>
-      Enum.reduce(%{}, fn({letter, freq}, freqs) -> Map.put(freqs, letter, freq / cipher_len) end)
+      Enum.filter(is_letter) |>
+      Enum.reduce(%{}, increase_entry_count) |>
+      Enum.reduce(%{}, put_frequency)
 
-    baseline |>
-      Enum.reduce(0, fn({letter, freq}, score) -> score + freq - Map.get(cipher_freqs, letter, 0) end)
+    baseline |> Enum.reduce(0, fn({letter, freq}, score) ->
+      score + freq - Map.get(cipher_freqs, letter, 0) end)
   end
 end
