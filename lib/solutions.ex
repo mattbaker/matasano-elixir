@@ -31,4 +31,8 @@ defmodule Solutions do
       tap({:ok, {deciphered, _}}, deciphered) |>
       String.rstrip
   end
+
+  def set_1_challenge_5(plaintext) do
+    Base.encode16(Matasano.xor_encrypt(plaintext, "ICE"), case: :lower)
+  end
 end

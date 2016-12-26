@@ -56,4 +56,9 @@ defmodule Matasano do
       {:error, :empty}
     end
   end
+
+  def xor_encrypt(plaintext, key) do
+    xor_str = String.pad_leading(<<>>, byte_size(plaintext), key)
+    xor(plaintext, xor_str)
+  end
 end
