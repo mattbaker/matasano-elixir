@@ -41,9 +41,10 @@ defmodule Matasano do
   end
 
   def brute_xor(cipher_str) do
+    cipher_length = byte_size(cipher_str)
     guesses = 0..255 |>
-      Enum.map(fn byte -> String.pad_leading(<<>>, byte_size(cipher_str), <<byte>>) end) |>
-      Enum.map(fn guess -> Matasano.xor(cipher_str, guess) end) |>
+      Enum.map(&String.pad_leading(<<>>, cipher_length, <<&1>>)) |>
+      Enum.map(&Matasano.xor(cipher_str, &1)) |>
       Enum.filter(&String.printable?/1)
 
     if !Enum.empty?(guesses) do
