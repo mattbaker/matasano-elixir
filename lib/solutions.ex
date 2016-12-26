@@ -13,12 +13,22 @@ defmodule Solutions do
   end
 
   def set_1_challenge_3(cipher) do
-    cipher_bytes = cipher |> Matasano.decode16
+    {:ok, {deciphered_guess, _}} = cipher |>
+      Matasano.decode16 |>
+      Matasano.brute_xor
+    deciphered_guess
+  end
 
-    0..255 |>
-    Enum.map(fn byte -> String.pad_leading(<<>>, byte_size(cipher_bytes), <<byte>>) end) |>
-    Enum.map(fn guess -> Matasano.xor(cipher_bytes, guess) end) |>
-    Enum.filter(&String.printable?/1) |>
-    Enum.min_by(&Matasano.score/1)
+  def set_1_challenge_4(file) do
+    {:ok, contents} = File.read(file)
+
+    {:ok, {deciphered, _}} = contents |>
+      String.split("\n") |>
+      Enum.map(&Matasano.decode16/1) |>
+      Enum.map(&Matasano.brute_xor/1) |>
+      Enum.filter(&match?({:ok, _}, &1)) |>
+      Enum.min_by(fn {:ok, {_, score}} -> score end)
+
+    String.rstrip(deciphered)
   end
 end

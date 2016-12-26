@@ -20,4 +20,10 @@ defmodule SolutionsTest do
     deciphered = "Cooking MC's like a pound of bacon"
     assert Solutions.set_1_challenge_3(enciphered) == deciphered
   end
+
+  test "set 1 challenge 4" do
+    file = "ciphers.txt"
+    deciphered = "Now that the party is jumping"
+    assert Solutions.set_1_challenge_4(file) == deciphered
+  end
 end

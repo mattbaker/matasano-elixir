@@ -39,4 +39,20 @@ defmodule Matasano do
     baseline |> Enum.reduce(0, fn({letter, freq}, score) ->
       score + freq - Map.get(cipher_freqs, letter, 0) end)
   end
+
+  def brute_xor(cipher_str) do
+    guesses = 0..255 |>
+      Enum.map(fn byte -> String.pad_leading(<<>>, byte_size(cipher_str), <<byte>>) end) |>
+      Enum.map(fn guess -> Matasano.xor(cipher_str, guess) end) |>
+      Enum.filter(&String.printable?/1)
+
+    if !Enum.empty?(guesses) do
+      best_guess = guesses |>
+        Enum.map(fn guess -> {guess, Matasano.score(guess)} end) |>
+        Enum.min_by(&elem(&1, 1))
+      {:ok, best_guess}
+    else
+      {:error, :empty}
+    end
+  end
 end
