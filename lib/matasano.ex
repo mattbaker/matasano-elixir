@@ -12,20 +12,17 @@ defmodule Matasano do
     xor(bin1, bin2, xored_bytes <> <<byte1 ^^^ byte2>>)
   end
 
-  def brute_xor(cipher_str) do
-    cipher_length = byte_size(cipher_str)
+  def xor_with_key(plaintext, key) do
+    xor_str = String.pad_leading(<<>>, byte_size(plaintext), key)
+    xor(plaintext, xor_str)
+  end
 
+  def brute_xor(cipher_str) do
     0..255 |>
-      Enum.map(&String.pad_leading(<<>>, cipher_length, <<&1>>)) |>
-      Enum.map(&Matasano.xor(cipher_str, &1)) |>
+      Enum.map(&Matasano.xor_with_key(cipher_str, <<&1>>)) |>
       Enum.filter(&String.printable?/1) |>
       Enum.map(fn guess -> {guess, Matasano.score(guess)} end) |>
       Enum.min_by(&elem(&1, 1), fn -> {"", 100} end)
-  end
-
-  def xor_encrypt(plaintext, key) do
-    xor_str = String.pad_leading(<<>>, byte_size(plaintext), key)
-    xor(plaintext, xor_str)
   end
 
   def score(cipher_str) do

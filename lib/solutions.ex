@@ -32,7 +32,7 @@ defmodule Solutions do
 
   def set_1_challenge_5(plaintext) do
     plaintext |>
-      Matasano.xor_encrypt("ICE") |>
+      Matasano.xor_with_key("ICE") |>
       Base.encode16(case: :lower)
   end
 
