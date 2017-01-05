@@ -1,11 +1,9 @@
 defmodule Matasano do
   use Bitwise
-  use PatternTap
 
   def decode16(encoded) do
-    encoded |>
-      Base.decode16(case: :lower) |>
-      tap({:ok, value}, value)
+    {:ok, value} = Base.decode16(encoded, case: :lower)
+    value
   end
 
   def xor(bin1, bin2, xored_bytes \\ <<>>)

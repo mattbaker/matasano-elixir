@@ -1,5 +1,4 @@
 defmodule Solutions do
-  use PatternTap
 
   def set_1_challenge_1(encoded) do
     encoded |>
@@ -22,7 +21,7 @@ defmodule Solutions do
   def set_1_challenge_4(file) do
     file |>
       File.read |>
-      tap({:ok, contents}, contents) |>
+      extract_ok_value |>
       String.split("\n") |>
       Enum.map(&Matasano.decode16/1) |>
       Enum.map(&Matasano.brute_xor/1) |>
@@ -36,4 +35,6 @@ defmodule Solutions do
       Matasano.xor_encrypt("ICE") |>
       Base.encode16(case: :lower)
   end
+
+  defp extract_ok_value({:ok, value}), do: value
 end
