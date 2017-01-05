@@ -45,7 +45,6 @@ defmodule Matasano do
     letter_counts = cipher_str |>
       String.graphemes |>
       Enum.map(&String.downcase/1) |>
-      Enum.filter(&is_letter/1) |>
       Enum.reduce(%{}, &increment_map_entry/2)
 
     Enum.reduce(baseline_frequencies, 0,
@@ -54,10 +53,6 @@ defmodule Matasano do
         score + standard_freq - cipher_freq
       end
     )
-  end
-
-  defp is_letter(char) do
-    char =~ ~r/[a-z]/
   end
 
   defp increment_map_entry(key, map) do
