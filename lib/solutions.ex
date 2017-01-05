@@ -16,7 +16,7 @@ defmodule Solutions do
     cipher |>
       Matasano.decode16 |>
       Matasano.brute_xor |>
-      tap({:ok, {guess, _}}, guess)
+      elem(0)
   end
 
   def set_1_challenge_4(file) do
@@ -26,13 +26,14 @@ defmodule Solutions do
       String.split("\n") |>
       Enum.map(&Matasano.decode16/1) |>
       Enum.map(&Matasano.brute_xor/1) |>
-      Enum.filter(&match?({:ok, _}, &1)) |>
-      Enum.min_by(fn {:ok, {_, score}} -> score end) |>
-      tap({:ok, {deciphered, _}}, deciphered) |>
+      Enum.min_by(fn {_, score} -> score end) |>
+      elem(0) |>
       String.rstrip
   end
 
   def set_1_challenge_5(plaintext) do
-    Base.encode16(Matasano.xor_encrypt(plaintext, "ICE"), case: :lower)
+    plaintext |>
+      Matasano.xor_encrypt("ICE") |>
+      Base.encode16(case: :lower)
   end
 end
