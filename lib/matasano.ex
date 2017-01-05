@@ -13,16 +13,16 @@ defmodule Matasano do
   end
 
   def xor_with_key(plaintext, key) do
-    xor_str = String.pad_leading(<<>>, byte_size(plaintext), key)
-    xor(plaintext, xor_str)
+    key_str = String.pad_leading(<<>>, byte_size(plaintext), key)
+    xor(plaintext, key_str)
   end
 
   def brute_xor(cipher_str) do
-    0..255 |>
-      Enum.map(&Matasano.xor_with_key(cipher_str, <<&1>>)) |>
-      Enum.filter(&String.printable?/1) |>
-      Enum.map(fn guess -> {guess, Matasano.score(guess)} end) |>
-      Enum.min_by(&elem(&1, 1), fn -> {"", 100} end)
+    0..255
+    |> Enum.map(&Matasano.xor_with_key(cipher_str, <<&1>>))
+    |> Enum.filter(&String.printable?/1)
+    |> Enum.map(fn guess -> {guess, Matasano.score(guess)} end)
+    |> Enum.min_by(&elem(&1, 1), fn -> {"", 100} end)
   end
 
   def score(cipher_str) do
@@ -37,10 +37,10 @@ defmodule Matasano do
 
     cipher_len = String.length(cipher_str)
 
-    letter_counts = cipher_str |>
-      String.graphemes |>
-      Enum.map(&String.downcase/1) |>
-      Enum.reduce(%{}, &increment_map_entry/2)
+    letter_counts = cipher_str
+    |> String.graphemes
+    |> Enum.map(&String.downcase/1)
+    |> Enum.reduce(%{}, &increment_map_entry/2)
 
     Enum.reduce(baseline_frequencies, 0,
       fn({letter, standard_freq}, score) ->
